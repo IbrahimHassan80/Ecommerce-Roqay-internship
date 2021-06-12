@@ -7,6 +7,7 @@ html {
 
 body {
   height: 100%;
+  text-align: right
 }
 
 a {
@@ -31,14 +32,14 @@ a {
 // Set container padding to match gutter width instead of default 15px
 .container,
 .container-fluid {
-  padding-left: $grid-gutter-width;
   padding-right: $grid-gutter-width;
+  padding-left: $grid-gutter-width;
 }
 
 // Scroll to top button
 .scroll-to-top {
   position: fixed;
-  right: 1rem;
+  left: 1rem;
   bottom: 1rem;
   display: none;
   width: 2.75rem;

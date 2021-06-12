@@ -21,6 +21,6 @@ class User extends Model
     ];
 
     public function mobile(){
-        return $this->hasMany(Usernumber::class);
+        return $this->hasMany(Usernumber::class, 'user_id','id');
     }
 }

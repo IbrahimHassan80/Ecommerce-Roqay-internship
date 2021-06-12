@@ -1,4 +1,12 @@
 // Global styles for both custom sidebar and topbar compoments
+[dir="rtl"] .navbar-nav .nav-item + .nav-item {
+  margin-left: 1rem;
+  margin-right: inherit;
+}
+// .dropdown-menu-right{
+//   left: 0 !important;
+//   right: auto !important;
+// }
 
 .sidebar,
 .topbar {

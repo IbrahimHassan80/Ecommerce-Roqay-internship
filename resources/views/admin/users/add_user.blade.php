@@ -2,50 +2,41 @@
 @section('title','Add Users')
 @section('content')
 
-    <form method="post" id="userSave" action="{{route('users.store')}}" class="col-md-6" enctype="multipart/form-data">
+    <form class="" method="post" id="userSave" action="{{route('users.store')}}" class="col-md-6" enctype="multipart/form-data">
         @csrf
         <div class="row">
           <div class="col">
             <input name="name" id="username" type="text" class="form-control" placeholder="name">
-      
             <span id="name_error" class="text-danger"> </span>
-        
           </div>
           
           <div class="col">
             <input type="email" id="email" name="email" class="form-control" placeholder="email">
-           
             <span id="email_error" class="text-danger"> </span>
-       
           </div>
           
           <div class="col">
             <input type="password" id="password" name="password" class="form-control" placeholder="password">
-            
             <span id="password_error" class="text-danger"> </span>
-            
           </div>
           
-          <div class="col">
-            <input type="text" id="mobile" name="mobile" class="form-control" placeholder="mobile">
-          
+          <div class="field_wrapeer">
+            <input type="text" id="mobile" name="mobile[]" class="form-control" placeholder="mobile">
+            <a href="javascript:void(0);" class="add_button" title="Add field">add</a>
             <span id="mobile_error" class="text-danger"> </span>
-     
           </div>
-
         </div>
         
         <div class="form-group">
             <label style="font-weight:bold;" for="exampleFormControlFile2">photo</label>
             <input name="photo" id="file" type="file" class="form-control" id="exampleFormControlFile2">
-           
             <span id="photo_error" class="text-danger"> </span>
-         
           </div>
        
           <button id="btn-click" class="btn btn-primary">add user</button>
         
         @if(Session::has('success'))
+       
         <div class="alert alert-primary" role="alert">
           {{Session::get('success')}}
         </div>
@@ -57,10 +48,11 @@
         <div class="alert alert-danger" id="deleted-msg" style="display: none">
             تم الحذف بنجاح
         </div>
-    
     </form>
     {{-- ---------------------------------------------- --}}
-      <div class="app-content content">
+    
+    {{-- table list of user --}}
+    <div class="app-content content">
         <div class="content-wrapper">
            
             <div class="content-body">
@@ -96,15 +88,13 @@
    <td><img style="width: 100px;height: 100px" src="{{url('admin/users/'.$user->photo)}}"></td>
     <td> <div class="btn-group" role="group"
       aria-label="Basic example">
-      
-      <a href="{{route('users.edit', $user->id)}}"
-        class="btn btn-outline-danger btn-min-width box-shadow-3 mr-1 mb-1">تعديل</a>
 
-                {{-- modaaal --}}
+
+            {{-- modaaal --}}
 
 <button id="modal{{$user->name}}" type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal{{$user->id}}" data-whatever="@getbootstrap">Edit modal</button>
 {{-- start modal div --}}
-<div class="mod modal fade" id="exampleModal{{$user->id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="moda modal fade" id="exampleModal{{$user->id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -130,11 +120,16 @@
             <label for="recipient-name" class="col-form-label">password</label>
             <input type="text" placeholder="password" class="form-control" id="recipient-name">
             
-            <label for="recipient-name" class="col-form-label">mobile</label>
-            <input type="text" name="mobile" value="{{$user->mobile}}" class="form-control" id="recipient-name">
-            
             <label for="recipient-name" class="col-form-label">photo</label>
             <input type="file" name="photo" class="form-control" id="recipient-name">
+            
+            <label for="recipient-name" class="col-form-label">mobile</label>
+            @foreach($user->mobile as $mobile)
+            <div class="col">
+            <input type="text" name="mobile" value="{{$mobile->mobile}}" class="form-control" id="recipient-name">
+            <input type="hidden" name="user_id" value="{{$mobile->user_id}}">  
+          </div>
+            @endforeach
             
             <input type="hidden" value="{{$user->id}}" name="user_id" id="user_id{{$user->id}}">
             <button type="button" id="edit{{$user->name}}" class="edit_modal btn btn-primary">Edit User</button>
@@ -143,28 +138,25 @@
       </div>
       
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button class="close_modal" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
 </div>
 
-                 {{--  end modaaal --}}
-                 <a id="btn_delete" href="" user_id={{$user->id}}
-                class="btn_delete btn btn-outline-danger btn-min-width box-shadow-3 mr-1 mb-1">حذف</a>
-             </div></td>
-              </tr>
-              @endforeach
-                  </tbody>
-              </table>
-              <div class="justify-content-center d-flex">
-
-              </div>
-                   </div>
+       {{--  end modaaal --}}
+       <a id="btn_delete" href="" user_id={{$user->id}}
+      class="btn_delete btn btn-outline-danger btn-min-width box-shadow-3 mr-1 mb-1">حذف</a>
+   </div></td>
+    </tr>
+    @endforeach
+        </tbody>
+          </table>
+             </div>
                </div>
-           </div>
+                </div>
                   </div>
-              </div>
+                   </div>
                 </section>
             </div>
         </div>
@@ -201,7 +193,6 @@
                       $("#password").val('');
                       $("#mobile").val('');
                       $("#file").val('');
-
                   }
               }, error: function (reject) {
                   var response = $.parseJSON(reject.responseText);
@@ -213,8 +204,41 @@
       });
    
 
-      //Delete AJax User
-      $(document).on('click', '.btn_delete', function (e) {
+      
+     
+
+
+    /////   Edit AJAX ----------------/////////////////////--------------------------//
+      
+    $(document).on('click', '.edit_modal', function (e) {
+    e.preventDefault();
+   // console.log(this.parentElement.parentElement);
+    var formData = new FormData($(this.parentElement.parentElement)[0]);
+    $.ajax({
+        type: 'post',
+        enctype: 'multipart/form-data',
+        url: "{{route('users.update')}}",
+        data: formData,
+        processData: false,
+        contentType: false,
+        cache: false,
+        success: function (data) {
+            if (data.status == true) {
+                $('#success-msg').show();
+                $(".close_modal").click();
+            }
+        }, error: function (reject) {
+            var response = $.parseJSON(reject.responseText);
+            $.each(response.errors, function (key, val) {
+                $("#" + key + "_error").text(val[0]);
+            });
+        }
+    });
+});
+
+  
+//Delete AJax User ----------/////////////////////////--------------------------- //
+   $(document).on('click', '.btn_delete', function (e) {
           e.preventDefault();
           
           var user_id = $(this).attr('user_id');
@@ -238,36 +262,31 @@
               }
           });
       });
-      
+  
+ 
+      // Add multi number fields--------------///////////////////------------------- //
+  $(document).ready(function(){
+    var maxfield = 10;
+    var addbutton = $('.add_button');
+    var wrapper = $('.field_wrapeer');
+    var fieldhtml = ' <div><input type="text" name="mobile[]" class="form-control" placeholder="mobile+"><a class="remove_button" href="javascript:void(0)">Remove</a></div>';
+    var x = 1;
 
-
-    /////   Edit AJAX ///////
-      
-    $(document).on('click', '.edit_modal', function (e) {
-    e.preventDefault();
-    //console.log(this.parent);
-    var formData = new FormData($('.formedit')[0]);
-    $.ajax({
-        type: 'post',
-        enctype: 'multipart/form-data',
-        url: "{{route('users.update')}}",
-        data: formData,
-        processData: false,
-        contentType: false,
-        cache: false,
-        success: function (data) {
-            if (data.status == true) {
-                $('#success-msg').show();
-                
-            }
-        }, error: function (reject) {
-            var response = $.parseJSON(reject.responseText);
-            $.each(response.errors, function (key, val) {
-                $("#" + key + "_error").text(val[0]);
-            });
+    $(addbutton).click(function(){
+        //Check maximum number of input fields
+        if(x < maxfield){ 
+            x++; //Increment field counter
+            $(wrapper).append(fieldhtml); //Add field html
         }
     });
-});
-
+    //Once remove button is clicked
+    $(wrapper).on('click', '.remove_button', function(e){
+        e.preventDefault();
+        $(this).parent('div').remove(); //Remove field html
+        x--; //Decrement field counter
+    });
+  
+  });
   </script>
    @stop
+   

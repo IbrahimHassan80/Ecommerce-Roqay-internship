@@ -26,7 +26,7 @@ class validate_add_category extends FormRequest
         return [
             'name_ar' => 'required|max:10',
             'name_en' => 'required|max:10',
-            'photo' => 'required|image|max:20000,mimes:jpg,jpeg.png',
+            'photo' => 'required_without:null|image|max:20000,mimes:jpg,jpeg.png',
         ];
     }
 }

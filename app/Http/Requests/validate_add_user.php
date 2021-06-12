@@ -28,7 +28,7 @@ class validate_add_user extends FormRequest
             'email' =>    'required|email',
             'password' => 'required',
             'photo' =>    'required|image|max:20000,mimes:jpg,jpeg.png',
-            'mobile' =>   'required|numeric',
+            'mobile' =>   'required',
         ];
     }
 }

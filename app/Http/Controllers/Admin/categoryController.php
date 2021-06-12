@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\validate_add_category;
 use App\Models\Admin\category;
+use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
 
 class categoryController extends Controller
@@ -61,13 +62,19 @@ class categoryController extends Controller
         if(!$category)
             return redirect()->route('category.create');
     
+            if(isset($request->photo)){
+                
+             if(File::exists(public_path('admin/category/' . $category->photo))){
+             File::delete(public_path('/admin/category/'. $category->photo));}  
+
             $file_extension = $request -> photo->getclientoriginalExtension();
             $file_name = time() . '.' . $file_extension;
             $path = 'admin/category';
             $request->photo->move($path, $file_name);
+            }
             
             $category->update([
-                'photo' =>   $file_name,
+                'photo' =>   $request->photo ? $file_name : $category->photo,
                 'name_ar' => $request->name_ar,
                 'name_en' => $request->name_en,
             ]);

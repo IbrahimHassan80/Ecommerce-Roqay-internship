@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\User;
+use App\Models\Admin\Usernumber;
 use Spatie\Permission\Models\Role;
 use DB;
 use Illuminate\Support\Facades\File;
@@ -40,11 +41,18 @@ class usersController extends Controller
              'photo'  => $file_name,
              'name'   => $request->name,
              'email'  => $request->email,
-             'mobile' => $request->mobile,
              'password' => Hash::make($request->password),
          ]);
+            foreach($request->mobile as $phone){
+              $number = Usernumber::create([
+                'mobile'=>  $phone,
+                'user_id'=> $user->id,
+                ]);
+            }
+         
 
          if($user){
+
           return response() -> json([
               'status' => true,
               'msg'    => 'Saved succesfully',
@@ -77,20 +85,23 @@ class usersController extends Controller
         $user = User::find($request->user_id);
         
         // save photo //
+        if(isset($request->photo)){
+          if(File::exists(public_path('admin/users/' . $user->photo))){
+          File::delete(public_path('/admin/users/'. $user->photo));}  
+       
         $file_extension = $request -> photo->getclientoriginalExtension();
         $file_name = time() . '.' . $file_extension;
         $path = 'admin/users';
         $request->photo->move($path, $file_name);
-
+        }
  
         $data['name']          =  $request->name;
         $data['email']         =  $request->email;
-        $data['mobile']        =  $request->mobile;
         $data['password']      =  Hash::make($request->password);
-        $data['photo']         =  $file_name;       
+        $data['photo']         =  $request->photo ? $file_name : $user->photo;       
    
         $update = $user->update($data);
-    
+
         if($update){
         return response() -> json([
             'status' => true,
@@ -107,8 +118,10 @@ class usersController extends Controller
 
     public function destroy(Request $request)
     {
+        // delete Ajax //
     $user = User::find($request->id);
     if($user){
+    File::delete(public_path('/admin/users/'. $user->photo));
     $user->delete();
       
      return response()->json([

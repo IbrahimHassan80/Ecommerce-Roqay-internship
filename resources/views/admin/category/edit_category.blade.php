@@ -12,7 +12,7 @@
         <span class="text-danger">{{$message}} </span>
        @enderror
       </div>
-     
+      <input type="hidden" name="null" value="{{$category->name_ar}}">
       <div class="col">
         <input type="text" value="{{$category->name_en}}" name="name_en" class="form-control" placeholder="name_en">
         @error('name_en')

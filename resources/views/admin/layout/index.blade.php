@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" dir="">
+<html lang="en" dir="{{get_default_lang()}}">
 
 <head>
     <meta charset="utf-8">
@@ -16,7 +16,7 @@
         rel="stylesheet">
 
     <!-- Custom styles for this template-->
-    <link href="{{asset('admin-theme/css/sb-admin-2.min.css')}}" rel="stylesheet">
+    <link href="@if( Config::get('app.locale') == 'ar'){{asset('admin-theme/css/sb-admin-2.min.css')}}@else{{asset('admin-theme/css/en-sb-admin-2.min.css')}}@endif" rel="stylesheet">
 </head>
 
 <body id="page-top">
