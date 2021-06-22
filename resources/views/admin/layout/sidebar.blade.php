@@ -54,8 +54,13 @@
             data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Custom Utilities:</h6>
+                @role('admin')
                 <a class="collapse-item" href="{{route('users.create')}}">Add User</a>
+                @endrole
+                
+
                 <a class="collapse-item" href="{{route('users.index')}}">show users</a>
+     
             </div>
         </div>
     </li>
@@ -64,7 +69,7 @@
 <li class="nav-item">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilitiess"
         aria-expanded="true" aria-controls="collapseUtilities">
-        <i class="fas fa-users"></i>
+        <i class="fas fa-user-shield"></i>
         <span>Admins</span>
     </a>
     
@@ -73,10 +78,47 @@
         <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Custom Utilities:</h6>
             <a class="collapse-item" href="{{route('admin.create')}}">Add Admin</a>
-            <a class="collapse-item" href="">show users</a>
+            <a class="collapse-item" href="{{route('admin.index')}}">show Admins</a>
         </div>
     </div>
 </li>
+
+
+<li class="nav-item">
+    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseproduct"
+        aria-expanded="true" aria-controls="collapseUtilities">
+        <i class="fas fa-shopping-cart"></i>
+        <span>Products</span>
+    </a>
+    
+    <div id="collapseproduct" class="collapse" aria-labelledby="headingUtilities"
+        data-parent="#accordionSidebar">
+        <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">Custom Utilities:</h6>
+            <a class="collapse-item" href="{{route('product.create')}}">Add productd</a>
+            <a class="collapse-item" href="{{route('product.index')}}">Show productds</a>
+            
+        </div>
+    </div>
+</li>
+
+
+<li class="nav-item">
+    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#tasks"
+        aria-expanded="true" aria-controls="collapseUtilities">
+        <i class="far fa-sticky-note"></i>
+        <span>Tasks</span>
+    </a>
+    
+    <div id="tasks" class="collapse" aria-labelledby="headingUtilities"
+        data-parent="#accordionSidebar">
+        <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">Custom Utilities:</h6>
+            <a class="collapse-item" href="{{route('task')}}">Add Task</a>
+        </div>
+    </div>
+</li>
+
 
 <!-- Divider -->
     <hr class="sidebar-divider">

@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Admin;
+use App\Models\Admin\User;
 use Illuminate\Http\Request;
+use Hash;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 class admincontroller extends Controller
@@ -16,7 +18,8 @@ class admincontroller extends Controller
      */
     public function index()
     {
-        
+        $data = Admin::select('id','name','email',)->orderBy('id','DESC')->get();
+        return view('admin.admin.show_admin', compact('data'))->with(['var' => 1]);   
     }
 
     /**
@@ -26,9 +29,10 @@ class admincontroller extends Controller
      */
     public function create()
     {
-         $admin = Admin::find(1);
-         $admin->givePermissionTo('admin_user_show');
-         return view('admin.admin.create_admin');
+ 
+    $role = Role::select('name', 'id')->get();
+    $Permission = Permission::select('name', 'id')->get();
+    return view('admin.admin.create_admin', compact('role','Permission'));
     }
 
     /**
@@ -39,7 +43,24 @@ class admincontroller extends Controller
      */
     public function store(Request $request)
     {
-        //
+     //   return $role = Admin::role('admin')->get();
+       
+        $admin = admin::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+        
+        if($request->role){
+        $role = Role::find($request->role);
+        $admin->assignRole($role);
+        }
+
+        if($request->permission){
+            $Permission = Permission::find($request->permission);
+            $admin->givePermissionTo($Permission);
+        }
+        return back();
     }
 
     /**
@@ -84,6 +105,11 @@ class admincontroller extends Controller
      */
     public function destroy($id)
     {
-        //
+        $admin = Admin::find($id);
+        if(!$admin)
+        return ('not found');
+
+        $admin->delete();
+        return back();
     }
 }

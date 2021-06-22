@@ -17,6 +17,7 @@
 
     <!-- Custom styles for this template-->
     <link href="@if( Config::get('app.locale') == 'ar'){{asset('admin-theme/css/sb-admin-2.min.css')}}@else{{asset('admin-theme/css/en-sb-admin-2.min.css')}}@endif" rel="stylesheet">
+    @livewireStyles
 </head>
 
 <body id="page-top">
@@ -106,6 +107,8 @@
     <script src="{{asset('admin-theme/js/demo/chart-pie-demo.js')}}"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     @yield('script')
+    
+    @livewireScripts
 </body>
 
 </html>

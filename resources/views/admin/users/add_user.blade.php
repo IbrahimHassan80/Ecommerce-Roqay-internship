@@ -4,6 +4,7 @@
 
     <form class="" method="post" id="userSave" action="{{route('users.store')}}" class="col-md-6" enctype="multipart/form-data">
         @csrf
+        
         <div class="row">
           <div class="col">
             <input name="name" id="username" type="text" class="form-control" placeholder="name">
@@ -77,19 +78,21 @@
    </tr>
    </thead>
    
-   <tbody>
+   <tbody id="tbo">
        @foreach($data as $user)
     <tr class="user_id_{{$user->id}}">
+     
       <td>{{$user->name}}</td>
-       <td>{{$user->email}}</td>
+     
+      <td>{{$user->email}}</td>
        <td>
           none
        </td>
    <td><img style="width: 100px;height: 100px" src="{{url('admin/users/'.$user->photo)}}"></td>
-    <td> <div class="btn-group" role="group"
+    
+   {{-- modal TD --}}
+   <td> <div class="btn-group" role="group"
       aria-label="Basic example">
-
-
             {{-- modaaal --}}
 
 <button id="modal{{$user->name}}" type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal{{$user->id}}" data-whatever="@getbootstrap">Edit modal</button>
@@ -113,24 +116,32 @@
             <div class="form-group">
             <label for="recipient-name" class="col-form-label">name</label>
             <input type="text" name="name" value="{{$user->name}}" class="form-control" id="recipient-name">
+            <span id="name_error_edit" class="name_error_edit text-danger"> </span>
             
             <label for="recipient-name" class="col-form-label">email</label>
             <input type="text" name="email" value="{{$user->email}}" class="form-control" id="recipient-name">
+            <span id="email_error_edit" class="email_error_edit text-danger"> </span>
             
             <label for="recipient-name" class="col-form-label">password</label>
-            <input type="text" placeholder="password" class="form-control" id="recipient-name">
+            <input type="text" name="password" placeholder="password" class="form-control" id="recipient-name">
+            <span id="password_error_edit" class="password_error_edit text-danger"> </span>
             
             <label for="recipient-name" class="col-form-label">photo</label>
             <input type="file" name="photo" class="form-control" id="recipient-name">
+            <input type="hidden" name="null" value="{{$user->name}}">
             
+            @if($user->mobile->count() > 0)
             <label for="recipient-name" class="col-form-label">mobile</label>
             @foreach($user->mobile as $mobile)
-            <div class="col">
-            <input type="text" name="mobile" value="{{$mobile->mobile}}" class="form-control" id="recipient-name">
-            <input type="hidden" name="user_id" value="{{$mobile->user_id}}">  
+            <div class="num_id_{{$mobile->id}} col">
+        
+              <input type="text" name="mobile[]" value="{{$mobile->mobile}}" class="form-control" id="recipient-name">
+         
+            <a class="delete_number btn btn-danger" num_id="{{$mobile->id}}" href="">حذف</a>
           </div>
+          <input type="hidden" name="user_id" value="{{$mobile->user_id}}">  
             @endforeach
-            
+            @endif
             <input type="hidden" value="{{$user->id}}" name="user_id" id="user_id{{$user->id}}">
             <button type="button" id="edit{{$user->name}}" class="edit_modal btn btn-primary">Edit User</button>
           </div> 
@@ -193,6 +204,10 @@
                       $("#password").val('');
                       $("#mobile").val('');
                       $("#file").val('');
+
+
+                      
+                      return(data); 
                   }
               }, error: function (reject) {
                   var response = $.parseJSON(reject.responseText);
@@ -213,6 +228,11 @@
     $(document).on('click', '.edit_modal', function (e) {
     e.preventDefault();
    // console.log(this.parentElement.parentElement);
+         $("#name_error_edit").text('');
+          $("#email_error_edit").text('');
+          $("#mobile_error_edit").text('');
+          $("#password_error_edit").text('');
+          $("#photo_error_edit").text('');
     var formData = new FormData($(this.parentElement.parentElement)[0]);
     $.ajax({
         type: 'post',
@@ -228,15 +248,17 @@
                 $(".close_modal").click();
             }
         }, error: function (reject) {
-            var response = $.parseJSON(reject.responseText);
-            $.each(response.errors, function (key, val) {
-                $("#" + key + "_error").text(val[0]);
-            });
+          var response = $.parseJSON(reject.responseText);
+                  $.each(response.errors, function (key, val) {
+                      $("." + key + "_error_edit").text(val[0]);
+                      
+                  });
         }
     });
 });
 
   
+
 //Delete AJax User ----------/////////////////////////--------------------------- //
    $(document).on('click', '.btn_delete', function (e) {
           e.preventDefault();
@@ -264,6 +286,7 @@
       });
   
  
+      
       // Add multi number fields--------------///////////////////------------------- //
   $(document).ready(function(){
     var maxfield = 10;
@@ -287,6 +310,34 @@
     });
   
   });
+
+
+// delete user phone number //
+  $(document).on('click', '.delete_number', function (e) {
+          e.preventDefault();
+          
+          var number_id = $(this).attr('num_id');
+          $.ajax({
+              type: 'post',
+              url: "{{route('users.delete.number')}}",
+              data: {
+                "_token" : "{{ csrf_token() }}",
+                  'id'   : number_id
+              }, 
+              success: function (data) {
+                  if (data.msg == 'deleted') {
+                    //  $('#deleted-msg').show();
+                      $('.num_id_' + data.id).remove();
+                  }
+              }, error: function (reject) {
+                  var response = $.parseJSON(reject.responseText);
+                  $.each(response.errors, function (key, val) {
+                      $("#" + key + "_error").text(val[0]);
+                  });
+              }
+          });
+      });
+
   </script>
    @stop
    

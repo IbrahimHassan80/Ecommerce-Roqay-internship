@@ -65,7 +65,7 @@ class categoryController extends Controller
             if(isset($request->photo)){
                 
              if(File::exists(public_path('admin/category/' . $category->photo))){
-             File::delete(public_path('/admin/category/'. $category->photo));}  
+               File::delete(public_path('/admin/category/'. $category->photo));}  
 
             $file_extension = $request -> photo->getclientoriginalExtension();
             $file_name = time() . '.' . $file_extension;
@@ -89,6 +89,9 @@ class categoryController extends Controller
         $category = category::find($id);
         if(!$category)
             return redirect()->route('category.create');
+
+            if(File::exists(public_path('admin/category/' . $category->photo))){
+                File::delete(public_path('/admin/category/'. $category->photo));}  
 
             $category->delete();
             return redirect()->route('category.create')->with(['deleted sucessfully']);

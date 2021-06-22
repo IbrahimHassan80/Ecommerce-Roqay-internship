@@ -15,7 +15,8 @@ class usersController extends Controller
   
       public function index(Request $request)
       {
-      $data = User::orderBy('id','DESC')->paginate(5);
+      $data = User::select('name','email','photo')->orderBy('id','DESC')->get();
+    
       return view('admin.users.show_user',compact('data'))->with('i', ($request->input('page', 1) - 1) * 5);
       }
 
@@ -56,7 +57,7 @@ class usersController extends Controller
           return response() -> json([
               'status' => true,
               'msg'    => 'Saved succesfully',
-              'name'  => $request->name
+              'id'  => $user->id,
           ]);
           } else {
            return response() -> json([
@@ -80,11 +81,11 @@ class usersController extends Controller
 
       }
 
-      public function update(Request $request)
+      public function update(validate_add_user $request)
       {
         $user = User::find($request->user_id);
         
-        // save photo //
+        // delete old photo //
         if(isset($request->photo)){
           if(File::exists(public_path('admin/users/' . $user->photo))){
           File::delete(public_path('/admin/users/'. $user->photo));}  
@@ -102,6 +103,17 @@ class usersController extends Controller
    
         $update = $user->update($data);
 
+        // delete old num and store new //
+        if(isset($request->mobile)){
+        Usernumber::where('user_id',$request->user_id)->delete();
+        foreach($request->mobile as $phone){
+          $number = Usernumber::create([
+            'mobile'=>  $phone,
+            'user_id'=> $request->user_id,
+            ]);
+          }
+        }
+        
         if($update){
         return response() -> json([
             'status' => true,
@@ -120,6 +132,11 @@ class usersController extends Controller
     {
         // delete Ajax //
     $user = User::find($request->id);
+    if(!$user){
+      return response()->json([
+        'msg' => 'id mot found',]);
+    }
+    
     if($user){
     File::delete(public_path('/admin/users/'. $user->photo));
     $user->delete();
@@ -130,6 +147,21 @@ class usersController extends Controller
       ]);
       }
   }
+  public function deletenumber(Request $request){
+    $num = Usernumber::find($request->id);
+    if(!$num){
+      return response()->json([
+        'msg' => 'id mot found',]);
+    }
+    if($num){
+      $num->delete();
+      return response()->json([
+          'msg' => 'deleted',
+          'id'  => $request->id
+      ]);
 
+    }
+
+  }
 
 }

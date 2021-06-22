@@ -1,6 +1,7 @@
 @extends('admin.layout.index')
 @section('content')
 @section('title','Category')
+    @can('edit')
     <form method="post" action="{{route('category.store')}}" class="col-md-6" enctype="multipart/form-data">
         @csrf
         <div class="row">
@@ -36,6 +37,7 @@
         @endif
       
     </form>
+    @endcan
     {{-- ---------------------------------------------- --}}
       <div class="app-content content">
         <div class="content-wrapper">
@@ -69,10 +71,14 @@
                                   aria-label="Basic example">
                                  <a href="{{route('category.edit', $cat->id)}}"
                                     class="btn btn-outline-primary btn-min-width box-shadow-3 mr-1 mb-1">تعديل</a>
-                                 
-                                    <a href="{{route('category.destroy', $cat->id)}}"
-                                    class="btn btn-outline-danger btn-min-width box-shadow-3 mr-1 mb-1">حذف</a>
-                               </div>
+                                    @role('admin')
+                                    <form action="{{route('category.destroy', $cat->id)}}" method="POST">
+                                        @csrf 
+                                        @method('Delete')
+                                     <button class="btn btn-danger">حذف</button>
+                                    </form>    
+                                    @endrole
+                                </div>
                              </td>
                           </tr>
                               @endforeach

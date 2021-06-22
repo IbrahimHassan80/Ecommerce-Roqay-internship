@@ -24,8 +24,8 @@ class validate_add_category extends FormRequest
     public function rules()
     {
         return [
-            'name_ar' => 'required|max:10',
-            'name_en' => 'required|max:10',
+            'name_ar' => 'required|max:30',
+            'name_en' => 'required|max:30',
             'photo' => 'required_without:null|image|max:20000,mimes:jpg,jpeg.png',
         ];
     }
