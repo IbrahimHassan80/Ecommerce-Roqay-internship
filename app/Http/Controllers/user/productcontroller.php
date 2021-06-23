@@ -15,7 +15,7 @@ class productcontroller extends Controller
     }
 
     public function add_to_card(Request $request){
-        $cart = cart::where('user_id', Auth()->user()->id,)->where('product_id' , $request->product_id,)->first();
+      /*  $cart = cart::where('user_id', Auth()->user()->id,)->where('product_id' , $request->product_id,)->first();
         if(!$cart){
         $cart = cart::create([
             'user_id' => Auth()->user()->id,
@@ -23,10 +23,23 @@ class productcontroller extends Controller
         ]); } else {
             cart::where('user_id', Auth()->user()->id)->where('product_id' , $request->product_id)->delete();
         }
-        return back();       
+        return back();   */
+    
+        $cart = cart::where('user_id', Auth()->user()->id,)->where('product_id' , $request->product_id,)->first();
+        if($cart){
+            $cart->increment('quantity');
+        }else{
+            cart::create([
+                'user_id' => Auth()->user()->id,
+                'product_id' => $request->product_id,
+                'quantity' =>  1,
+            ]);
+        }
+    
     }
 
     public function showUserProducts(){
+        
         $product = Auth()->user()->product;
         return view('user.products.users_products', compact('product'));
     }

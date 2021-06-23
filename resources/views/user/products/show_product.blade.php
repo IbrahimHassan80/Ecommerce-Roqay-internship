@@ -11,12 +11,10 @@
         @csrf
         <input type="hidden" value="{{$product->id}}" name="product_id">
         {{-- <button id="btn_click" class="btn btn-primary">{{$product->users->count() > 0 ? 'remove from Cart' : 'Add To Cart'}}</button> --}}
-        <input id="btn_click" type="submit" class="btn btn-primary" value="{{$product->users->count() > 0 ? 'remove from Cart' : 'Add To Cart'}}">
+        <input id="btn_click" type="submit" class="btn btn-primary" value="addtocart">
     </form>
 </div>
-
 </div>
-
 @endsection
 
 @section('script')
@@ -34,7 +32,6 @@
               contentType: false,
               cache: false,
               success: function (data) {
-                
               }, error: function (reject) {
                 
               }

@@ -7,6 +7,8 @@
     <div class="card-body">
       <h5 class="card-title">{{$pro->name}}</h5>
       <p class="card-text">{{$pro->description}}</p>
+      <h6>price: {{$pro->price}}</h6>
+      <p class="card-text">quantity : {{ getquantity($pro->id) }}</p>
 
       <a href="{{route('show.product',$pro->id)}}" class="btn btn-primary">show Product</a>
     </div>
